@@ -1,5 +1,4 @@
 import numpy as np
-from multi_level_eval import low_level_diagonal
 
 
 def setup_matrices_by_layer(code_ids, translation_dict, max_layer = 1, include_duplicates = True):
