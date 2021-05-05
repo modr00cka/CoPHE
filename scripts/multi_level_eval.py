@@ -214,4 +214,64 @@ def report_bin(pred, gold):
     pred_bin = (pred>0)*1
     gold_bin = (gold>0)*1
     return report(pred_bin, gold_bin)
+
+if __name__ == "__main__":
+    print(f"Hierarchical Evaluation Demonstration")
+    print(f"Vectors correspond to leafs: \n(a.1, a.2, a.3, b.1, b.2, c.1, d.1, d.1, d.2)")
+    print(f"Their corresponding parents are: \b (a, a, a, b, b, c, d, d, d)")
     
+    leaf_dict = dict(zip(range(9), ["a.1", "a.2", "a.3", "b.1", "b.2", "c.1", "d.1", "d.1", "d.2"]))
+    print ("Gold Standard")
+    gold_matrix = np.array([[0, 0, 1, 0, 1, 0, 1, 1, 0],
+                            [0, 1, 0, 0, 0, 1, 0, 1, 1],
+                            [1, 0, 1, 1, 0, 1, 0, 1, 1],
+                            [0, 0, 1, 1, 1, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 1, 0, 0, 0, 1, 0, 0],
+                            [0, 0, 1, 1, 1, 0, 1, 1, 0]])# sample matrix gold standard
+    print(gold_matrix)
+
+
+    print ("Prediction")
+    pred_matrix = np.array([[0, 1, 1, 0, 1, 0, 0, 1, 0],  
+                            [0, 1, 0, 0, 0, 1, 0, 1, 1],
+                            [0, 1, 1, 1, 0, 0, 1, 0, 1],
+                            [0, 0, 1, 1, 1, 0, 0, 1, 1],
+                            [1, 1, 0, 1, 0, 0, 0, 1, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [1, 1, 1, 1, 1, 1, 1, 1, 1]])# sample matrix prediction
+    print(pred_matrix)
+                            
+    test_tp_mul = tp_matrix_mul_per_class(pred_matrix, gold_matrix)
+    test_fp_mul = fp_matrix_mul_per_class(pred_matrix, gold_matrix)
+    test_fn_mul = fn_matrix_mul_per_class(pred_matrix, gold_matrix)
+    
+    print(f"TP: {test_tp_mul} FP: {test_fp_mul} FN:{test_fn_mul}")
+    
+    print(report(pred_matrix, gold_matrix, leaf_dict))
+    
+    print("============================================")
+    print("=============PARENT-LEVEL===================")
+    print("============================================")
+    
+    child_to_parent_matrix = np.array([[1,0,0,0],
+                                   [1,0,0,0],
+                                   [1,0,0,0],
+                                   [0,1,0,0],
+                                   [0,1,0,0],
+                                   [0,0,1,0],
+                                   [0,0,0,1],
+                                   [0,0,0,1],
+                                   [0,0,0,1]])
+    
+    parent_pred_matrix = pred_matrix.dot(child_to_parent_matrix)
+    parent_gold_matrix = gold_matrix.dot(child_to_parent_matrix)
+    
+    parent_dict = dict(zip(range(4), ["a", "b", "c", "d"]))
+    
+    print("Parent-Translated Gold Standard")
+    print(parent_gold_matrix)
+    print("Parent-Translated Prediction")
+    print(parent_pred_matrix)
+    
+    print(report(parent_pred_matrix, parent_gold_matrix, parent_dict))
