@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.sparse import csr_matrix
 
 
 def setup_matrices_by_layer(code_ids, translation_dict, max_layer = 1, include_duplicates = True):
@@ -33,8 +34,7 @@ def setup_matrices_by_layer(code_ids, translation_dict, max_layer = 1, include_d
                 double_ancestor = translation_dict[ancestor]["parents"][layer]  
                 duplicate_ancestor = double_ancestor == code
                 vals.append(not(duplicate_ancestor)*1)
-                    
-        
+
         matrix = csr_matrix((vals, (rows, cols)), shape=((len(rows)), (len(set(cols))))) # set up the sparse matrix
         
         matrices.append(matrix) # append the matrix for this layer
@@ -75,3 +75,42 @@ def hierarchical_eval_setup(preds, golds, layer_matrices, max_onto_layers):
     
     return combined_preds, combined_golds
     
+if __name__ == "__main__":
+    print(f"Hierarchical Evaluation Setup Demonstration")
+    print(f"Vectors correspond to leafs: \n(a.1, a.2, a.3, b.1, b.2, c.1, d.1, d.2, d.3)")
+    print(f"Their corresponding parents are: \b (a, a, a, b, b, c, d, d, d)")
+    
+    code_ids = dict(zip(["a.1", "a.2", "a.3", "b.1", "b.2", "c.1", "d.1", "d.2", "d.3"], range(9)))
+    translation_dict = dict({"a.1":dict({"parents":["a", "AB"]}), 
+                             "a.2":dict({"parents":["a", "AB"]}), 
+                             "a.3":dict({"parents":["a", "AB"]}), 
+                             "b.1":dict({"parents":["b", "AB"]}), 
+                             "b.2":dict({"parents":["b", "AB"]}), 
+                             "c.1":dict({"parents":["c", "CD"]}), 
+                             "d.1":dict({"parents":["d", "CD"]}), 
+                             "d.2":dict({"parents":["d", "CD"]}), 
+                             "d.3":dict({"parents":["d", "CD"]})})
+    matrices, layer_id_dicts  = (setup_matrices_by_layer(code_ids, translation_dict, max_layer = 2))
+    print("========TRANSLATION MATRICES========")
+    print("Layer 0 to 1")
+    print(matrices[0].toarray(), layer_id_dicts[0])
+    print("====================================")
+    print("Layer 1 to 2")
+    print(matrices[1].toarray(), layer_id_dicts[1])
+
+
+    sample_matrix = np.array([[0, 1, 1, 0, 1, 0, 0, 1, 0],  
+                              [0, 1, 0, 0, 0, 1, 0, 1, 1],
+                              [0, 1, 1, 1, 0, 0, 1, 0, 1],
+                              [0, 0, 1, 1, 1, 0, 0, 1, 1],
+                              [1, 1, 0, 1, 0, 0, 0, 1, 0],
+                              [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                              [1, 1, 1, 1, 1, 1, 1, 1, 1]])
+                              
+    print("========Sample Transitions========")
+    print("Sample Matrix:")
+    print(sample_matrix)
+    print("Layer 1")
+    print((sample_matrix.dot(matrices[0].toarray())), layer_id_dicts[0])
+    print("Layer 2")
+    print((sample_matrix.dot(matrices[1].toarray())), layer_id_dicts[1])

@@ -3,6 +3,7 @@
 ## Requirements
 
 ``numpy``
+``scipy.sparse.csr_matrix``
 
 ## Motivation
 Evaluation in Large-Scale Multi-Label Classification, such as ICD-9 coding in MIMIC-III, is treated in prior art as exact-match evaluation. As these tasks are weakly labelled, we are comparing document-level predictions with document-level gold standard labels. For each document a prediction binary vector is compared to a gold-standard binary vector. The label space consists of leaf nodes within the ICD-9 tree, treating both the prediction and the gold standard as flat. 
