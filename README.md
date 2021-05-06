@@ -55,8 +55,39 @@ let *y* be the number of gold standard codes within a certain code family *f* fo
 
 <center>Figure 4: A comparison between predictions and gold standard showing the non-binary scenario. Two phenomena of the non-binary ancestor evaluation are on display: **(1)** While there is a mismatch on the leaf level in the *401* family (401.1 predicted versus 401.9 expected), translated into the direct ancestor level (*401*), both the prediction and the true label are *401* respectively - allowing for a match on this level. **(2)** For parent *402* there are two leaves predicted, while 1 expected. This puts us in the non-binary scenario, with TP = 1, FP = 1, FN = 0. As displayed in (1), on this ancestor level the match between the leaves does not matter, but rather how many times the ancestor is involved. In this case the ancestor (*401*) is overpredicted by 1.</center>
 
+### Example
+On the bottom level (bellow the blue line), we have 2 predictions (in purple 364.11, 364.21) and two true labels (in orange 364.11, 364.22). One prediction matches one true label (364.11) resulting in TP = 1, there is one false positive and one false negative. Eval 0 = (1,1,1)
+
+The middle level (between the blue and red lines), there are two ancestors of nodes from level 0 (364.1, 364.2), and a leaf prediction (364.3). One prediction path and one Gold path passes through node 364.1. One prediction path and one Gold path passes through node 364.2 (note that the paths in this case end in different leaves, but that is handled by level 0 evaluation). A single prediction path ends in 364.3. Hence we have 1 match on 364.1, one match on 364.2, and one False positive on 364.3.
+Eval 1 = (2,1,0)
+
+The top level consist only of one node, Through this node 5 paths pass - three prediction paths and two true label paths. This represent that the model predicts 3 counts of disorders of iris and ciliary body, while only 2 are advised by the gold standard. THis results in 2 true positives and 1 false positive.
+Eval 2 = (2,1,0)
+
+We can calculate the Precision, Recall and F1 score on each level individually, or combine them.
+
+Eval all levels = (1+2+2, 1+1+1, 1+0+0) = (5, 3, 1)
+
+
+![5](Images/nonbinary_eval_example.png)
+
 ## Leaf Depth Mismatch
 
 ICD-9 leaves appear at different depths. This means that a parent of one leaf code can be the grandparent of another. For instance, code *364* has a parent relation to the leaf *364.3* and grandparent to leaf *364.11*. This poses an issue to aggregation and evaluation. If we perform hierarchical evaluation based on direct ancestry, we will see 364 both in first-order ancestry and second-order ancestry. An argument can be made for representing the hierarchy as layers (depths) and hence aggregate the predictions/true labels of the descendants of each code within the layer (top-down), rather than represent the hierarchy through relations of ancestry (bottom up).
-![5](Images/combined_representations.png)
+![6](Images/combined_representations.png)
 <center>Figure 5: Ancestor-relation based representation, versus layer-based representation. Ancestor-relation based representaion of the hierarchy (black edges represent a parent relation, yellow edges represents a parent of a parent relation). The red and blue lines divide up the hierarchy based on layers (depth)</center>
+
+## Scripts
+
+### evaluation_setup.py
+This script cotains methods for setting up the evaluation.
+
+``setup_matrices_by_layer`` produces transition matrices between the original prediction and each layer, along with the resulting ancestor code IDs within the vectors created throug multiplication by transition matrices.
+
+
+``hierarchical_eval_setup`` concatenates the predictions and gold standard across layers respectively. This results in overall predictions (with ancestors) and overall gold standard (with ancestors). These can then be evaluated with methods from ``multi_level_eval.py``
+
+### mutli_level_eval.py 
+This script includes the evaluation measures - either overall, or per class; binary and non-binary. It also includes reporting functions for precision, recall, and F1. The ``report`` method produces these for each class and presents them as a dataframe.
+
+The intended use is to create individual reports for each of the layers for in-depth analysis, and to run an overall micro-average report on the concatenated matrices received from ``hierarchical_eval_setup`` from ``evaluation_setup.py``
