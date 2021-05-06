@@ -108,9 +108,28 @@ if __name__ == "__main__":
                               [1, 1, 1, 1, 1, 1, 1, 1, 1]])
                               
     print("========Sample Transitions========")
-    print("Sample Matrix:")
+    print("Sample prediction Matrix:")
     print(sample_matrix)
     print("Layer 1")
     print((sample_matrix.dot(matrices[0].toarray())), layer_id_dicts[0])
     print("Layer 2")
     print((sample_matrix.dot(matrices[1].toarray())), layer_id_dicts[1])
+    
+    
+    print("Sample gold standard Matrix:")
+    sample_gold_matrix = np.array([[0, 0, 1, 0, 1, 0, 1, 1, 0],
+                                   [0, 1, 0, 0, 0, 1, 0, 1, 1],
+                                   [1, 0, 1, 1, 0, 1, 0, 1, 1],
+                                   [0, 0, 1, 1, 1, 0, 0, 0, 0],
+                                   [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                   [0, 0, 1, 0, 0, 0, 1, 0, 0],
+                                   [0, 0, 1, 1, 1, 0, 1, 1, 0]])
+    print(sample_gold_matrix)
+    print("========Overall Cross-Layer Evaluation Setup========")
+    
+    combined_preds, combined_golds = hierarchical_eval_setup(sample_matrix, sample_gold_matrix, matrices, 2)
+    print("Combined prediction vectors across layers")
+    print(combined_preds)
+    print("Combined gold standard vectors across layers")
+    print(combined_golds)
+    print("With these combined predictions and gold standard labels across layers we can now apply the evaluation measures for the non-binary scenario in multi_level_eval.py")
