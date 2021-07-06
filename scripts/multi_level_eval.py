@@ -217,29 +217,29 @@ def report_bin(pred, gold):
 
 if __name__ == "__main__":
     print(f"Hierarchical Evaluation Demonstration")
-    print(f"Vectors correspond to leafs: \n(a.1, a.2, a.3, b.1, b.2, c.1, d.1, d.1, d.2)")
-    print(f"Their corresponding parents are: \b (a, a, a, b, b, c, d, d, d)")
+    print(f"Vectors correspond to leafs: \n(a.1, a.2, a.3, b.1, b.2, c.1, d)")
+    print(f"Their corresponding level 1 are: \b (a, a, a, b, b, c, d)")
     
-    leaf_dict = dict(zip(range(9), ["a.1", "a.2", "a.3", "b.1", "b.2", "c.1", "d.1", "d.1", "d.2"]))
+    leaf_dict = dict(zip(range(7), ["a.1", "a.2", "a.3", "b.1", "b.2", "c.1", "d"]))
     print ("Gold Standard")
-    gold_matrix = np.array([[0, 0, 1, 0, 1, 0, 1, 1, 0],
-                            [0, 1, 0, 0, 0, 1, 0, 1, 1],
-                            [1, 0, 1, 1, 0, 1, 0, 1, 1],
-                            [0, 0, 1, 1, 1, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0, 1, 0, 0, 0, 1, 0, 0],
-                            [0, 0, 1, 1, 1, 0, 1, 1, 0]])# sample matrix gold standard
+    gold_matrix = np.array([[0, 0, 1, 0, 1, 0, 1],
+                            [0, 1, 0, 0, 0, 1, 0],
+                            [1, 0, 1, 1, 0, 1, 0],
+                            [0, 0, 1, 1, 1, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 1, 0, 0, 0, 1],
+                            [0, 0, 1, 1, 1, 0, 1]])# sample matrix gold standard
     print(gold_matrix)
 
 
     print ("Prediction")
-    pred_matrix = np.array([[0, 1, 1, 0, 1, 0, 0, 1, 0],  
-                            [0, 1, 0, 0, 0, 1, 0, 1, 1],
-                            [0, 1, 1, 1, 0, 0, 1, 0, 1],
-                            [0, 0, 1, 1, 1, 0, 0, 1, 1],
-                            [1, 1, 0, 1, 0, 0, 0, 1, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [1, 1, 1, 1, 1, 1, 1, 1, 1]])# sample matrix prediction
+    pred_matrix = np.array([[0, 1, 1, 0, 1, 0, 0],  
+                            [0, 1, 0, 0, 0, 1, 0],
+                            [0, 1, 1, 1, 0, 0, 1],
+                            [0, 0, 1, 1, 1, 0, 0],
+                            [1, 1, 0, 1, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0],
+                            [1, 1, 1, 1, 1, 1, 1]])# sample matrix prediction
     print(pred_matrix)
                             
     test_tp_mul = tp_matrix_mul_per_class(pred_matrix, gold_matrix)
@@ -260,8 +260,6 @@ if __name__ == "__main__":
                                    [0,1,0,0],
                                    [0,1,0,0],
                                    [0,0,1,0],
-                                   [0,0,0,1],
-                                   [0,0,0,1],
                                    [0,0,0,1]])
     
     parent_pred_matrix = pred_matrix.dot(child_to_parent_matrix)
