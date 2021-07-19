@@ -8,7 +8,10 @@ import logging
 def tp_matrix_mul(pred, gold, axes):
     """
     Calculation of True Positives in non-binary setting.
-    On the ancestor levels leaf-level mismatches do not matter. If an ancestor-prediction has an ancestor-gold counterpart, it is considered a TP. Hence, the overall TP for an ancestor is the minimum of the count of the predicted ancestor and the count of the gold standard ancestor.
+    On the ancestor levels leaf-level mismatches do not matter. If an ancestor-prediction has an ancestor-gold counterpart,
+    it is considered a TP. Hence, the overall TP for an ancestor is the minimum of the count of the predicted ancestor 
+    and the count of the gold standard ancestor.
+    
     inputs
       pred: numpy array of predictions
       gold: numpy array of true labels
@@ -20,7 +23,10 @@ def tp_matrix_mul(pred, gold, axes):
 def fp_matrix_mul(pred, gold, axes):
     """
     Calculation of False Positives in non-binary setting.
-    If an ancestor-prediction does not have an ancestor-gold counterpart, it is considered a FP. Hence, the overall FP for an ancestor represents how many more times the ancestor has been predicted in a document compared to how many times it appears in the gold standard.
+    If an ancestor-prediction does not have an ancestor-gold counterpart, it is considered a FP. 
+    Hence, the overall FP for an ancestor represents how many more times the ancestor has been predicted in a document 
+    compared to how many times it appears in the gold standard.
+    
     inputs
       pred: numpy array of predictions
       gold: numpy array of true labels
@@ -32,7 +38,10 @@ def fp_matrix_mul(pred, gold, axes):
 def fn_matrix_mul(pred, gold, axes):
     """
     Calculation of False Negatives in non-binary setting.
-    If an ancestor-gold does not have an ancestor-prediction counterpart, it is considered a FN. Hence, the overall FN for an ancestor represents how many more times the ancestor appears in a document compared to how many times it was predicted for the document.
+    If an ancestor-gold does not have an ancestor-prediction counterpart, it is considered a FN. 
+    Hence, the overall FN for an ancestor represents how many more times the ancestor appears in a document 
+    compared to how many times it was predicted for the document.
+    
     inputs
       pred: numpy array of predictions
       gold: numpy array of true labels
@@ -191,7 +200,9 @@ def report_macro(pred, gold):
 
 def report_macro_bin(pred, gold):
     """
-    binarised version of report_macro - the prediction and gold matrix are set to binary, where positive entries are set to 1.
+    binarised version of report_macro - the prediction and gold matrix are set to binary, 
+    where positive entries are set to 1.
+    
     return report_macro on these binarised inputs
     """
     pred_bin = (pred>0)*1
@@ -200,7 +211,9 @@ def report_macro_bin(pred, gold):
 
 def report_micro_bin(pred, gold):
     """
-    binarised version of report_micro - the prediction and gold matrix are set to binary, where positive entries are set to 1.
+    binarised version of report_micro - the prediction and gold matrix are set to binary, 
+    where positive entries are set to 1.
+    
     return report_micro on these binarised inputs
     """
     pred_bin = (pred>0)*1
