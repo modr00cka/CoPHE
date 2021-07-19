@@ -43,17 +43,10 @@ def setup_matrices_by_layer(code_ids, translation_dict, max_layer = 1, include_d
         layer_id_dicts.append(layer_id_dict) # append the id dictionary for this layer
     return matrices, layer_id_dicts 
 
-def low_level_diagonal_old(matrix):
-    """
-    Creates a diagonal matrix from the input. Intended as a filter for the lowest level of the ontology
-    """
-    bin_vector = np.sum(matrix, axis = 1)
-    print(bin_vector)
-    return np.diag(bin_vector)
     
 def low_level_diagonal(code_ids, translation_dict):
     """
-    Creates a diagonal matrix from the input. Intended as a filter for the lowest level of the ontology
+    Creates the matrix to keep only the lowest-level leaf codes
     """
     rows, cols, vals = [], [], [] # setup for a sparse matrix
     layer_codeset = set() # set of relevant lowest-level leaves
