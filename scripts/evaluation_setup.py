@@ -3,7 +3,7 @@ from scipy.sparse import csr_matrix
 import json
 
 def load_translation_dict_from_icd9(fn_icd9_graph_json='../ICD9/icd9_graph_desc.json'):
-    """load the icd9 graph translation disctionary"""
+    """Load the icd9 graph translation dictionary"""
     with open(fn_icd9_graph_json,encoding='utf-8') as json_file:    
         translation_dict_icd9 = json.load(json_file)
     return translation_dict_icd9
