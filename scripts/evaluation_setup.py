@@ -1,6 +1,12 @@
 import numpy as np
 from scipy.sparse import csr_matrix
+import json
 
+def load_translation_dict_from_icd9(fn_icd9_graph_json='../ICD9/icd9_graph_desc.json'):
+    """load the icd9 graph translation disctionary"""
+    with open(fn_icd9_graph_json,encoding='utf-8') as json_file:    
+        translation_dict_icd9 = json.load(json_file)
+    return translation_dict_icd9
 
 def setup_matrices_by_layer(code_ids, translation_dict, max_layer = 1, include_duplicates = False):
     """
@@ -167,3 +173,19 @@ if __name__ == "__main__":
     print("Combined gold standard vectors across layers")
     print(combined_golds)
     print("With these combined predictions and gold standard labels across layers we can now apply the evaluation measures for the non-binary scenario in multi_level_eval.py")
+    
+    #another example: about ICD9 graph
+    #load json to get the  translation_dict from icd-9
+    fn_icd9_graph_json = r'..\ICD9\icd9_graph_desc.json'
+    translation_dict_icd9 = load_translation_dict_from_icd9(fn_icd9_graph_json)
+    
+    print('There are %d entries in translation_dict_icd9.' % len(translation_dict_icd9))
+    
+    code_ids = dict(zip(["770.12", "427.31", "95.25"], range(3)))
+    matrices, layer_id_dicts  = (setup_matrices_by_layer(code_ids, translation_dict_icd9, max_layer = 2))
+    print("========TRANSLATION MATRICES========")
+    print("Layer 0 to 1")
+    print(matrices[0].toarray(), layer_id_dicts[0])
+    print("====================================")
+    print("Layer 0 to 2")
+    print(matrices[1].toarray(), layer_id_dicts[1])
