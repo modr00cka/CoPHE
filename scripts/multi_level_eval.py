@@ -5,6 +5,8 @@ import numpy as np
 
 import logging
 
+from evaluation_setup import hierarchical_eval_setup, combined_matrix_setup
+
 def tp_matrix_mul(pred, gold, axes):
     """
     Calculation of True Positives in non-binary setting.
@@ -228,6 +230,50 @@ def report_bin(pred, gold):
     gold_bin = (gold>0)*1
     return report(pred_bin, gold_bin)
 
+def hierarchical_evaluation(logits_binary, evalY_np_array, vocabulary_word2index_label,translation_dict,max_layer=3,verbo=False):
+    '''A summary function for final reporting
+    Return 4 variables: micro prec,rec,f1 for overall he, and then the list of results per layer, from layer 1 (leaf node only) up to layer 4 (so there are 4 sets of results, each set has 3 metrics, i.e. micro prec,rec,f1). (he: hierarchical evaluation)
+    '''
+    matrices, layer_id_dicts  = (combined_matrix_setup(vocabulary_word2index_label, translation_dict, max_layer = max_layer))
+    if verbo:
+        print("========TRANSLATION MATRICES========")            
+        for layer_ind in range(max_layer+1):
+            print("Layer %s labels:" % (str(layer_ind+1)))
+            print(matrices[layer_ind].shape, matrices[layer_ind].toarray(), layer_id_dicts[layer_ind])
+            print("====================================")
+    
+    combined_preds, combined_golds = hierarchical_eval_setup(logits_binary, evalY_np_array, matrices, max_onto_layers = max_layer)
+    print('hiearchical evaluation - micro-level results')
+    print('overall hierarchical evaluation results:')
+    he_micro_dict = report_micro(combined_preds, combined_golds)
+    #he_macro_dict = report_macro(combined_preds, combined_golds)
+    he_micro_prec,he_micro_rec,he_micro_f1 = he_micro_dict['Precision'],he_micro_dict['Recall'],he_micro_dict['F1']
+    #he_macro_prec,he_macro_rec,he_macro_f1 = he_macro_dict['Precision'],he_macro_dict['Recall'],he_macro_dict['F1']
+    print(he_micro_dict)
+    #print(he_macro_dict)
+    print('set-based:')
+    he_micro_set_based_dict = report_micro_bin(combined_preds, combined_golds)
+    print(he_micro_set_based_dict)
+    
+    list_results_by_layer = []
+    #get results and loop over parent levels
+    for layer_ind in range(max_layer+1):
+        child_to_parent_matrix = matrices[layer_ind].toarray()
+        
+        parent_pred_matrix = logits_binary.dot(child_to_parent_matrix)
+        parent_gold_matrix = evalY_np_array.dot(child_to_parent_matrix)
+        print('result at layer %s' % str(layer_ind + 1))
+        he_micro_dict = report_micro(parent_pred_matrix, parent_gold_matrix)
+        #he_macro_dict = report_macro(parent_pred_matrix, parent_gold_matrix)
+        he_micro_prec_layer,he_micro_rec_layer,he_micro_f1_layer = he_micro_dict['Precision'],he_micro_dict['Recall'],he_micro_dict['F1']
+        #he_macro_prec,he_macro_rec,he_macro_f1 = he_macro_dict['Precision'],he_macro_dict['Recall'],he_macro_dict['F1']
+        print(he_micro_dict)
+        #print(he_macro_dict)
+        for metric_per_layer in (he_micro_prec_layer,he_micro_rec_layer,he_micro_f1_layer):#,he_macro_prec,he_macro_rec,he_macro_f1
+            list_results_by_layer.append(metric_per_layer)
+
+    return he_micro_prec,he_micro_rec,he_micro_f1,list_results_by_layer
+    
 if __name__ == "__main__":
     print(f"Hierarchical Evaluation Demonstration")
     print(f"Vectors correspond to leafs: \n(a.1, a.2, a.3, b.1, b.2, c.1, d)")
