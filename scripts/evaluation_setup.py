@@ -22,31 +22,35 @@ def setup_matrices_by_layer(code_ids, translation_dict, max_layer = 1, include_d
     matrices = [] # tranlsation matrices per layer
     layer_id_dicts = [] # id-to-code dictionary per layer
 
-    
+
     for layer in range(max_layer):
         rows, cols, vals = [], [], [] # setup for a sparse matrix
         layer_codeset = set() # codeset for ancestors - in order to remove duplicates for layer representation
         for code in code_ids:
-            layer_codeset.add(translation_dict[code]["parents"][layer]) # collection of relevant ancestors in the layer
-            
+            candidate = translation_dict[code]["parents"][layer]
+            if layer == max_layer-1 or candidate != translation_dict[code]["parents"][layer+1] or include_duplicates:
+                layer_codeset.add(translation_dict[code]["parents"][layer]) # collection of relevant ancestors in the layer
+
         layer_ranges = list(range(len(layer_codeset)))
         layer_id_dict = dict(zip(list(layer_codeset), layer_ranges)) # association of IDs with relevant acestors in the layer
         
         for code in code_ids:
-            rows.append(code_ids[code])  # row number (current code)
             ancestor = translation_dict[code]["parents"][layer]
-            cols.append(layer_id_dict[ancestor]) # col number (ancestor)
-            if include_duplicates or layer == max_layer-2:  # if duplicates are allowed or the next layer is the final layer, create an edge
-                vals.append(1)
-            else:  # otherwise observe the ancestor of the ancestor - if this matches the current code, do not create an edge. Otherwise create an edge.
-                double_ancestor = translation_dict[ancestor]["parents"][layer]  
-                duplicate_ancestor = double_ancestor == code
-                vals.append(not(duplicate_ancestor)*1)
+            if ancestor in layer_codeset:
+                rows.append(code_ids[code])  # row number (current code)
+                cols.append(layer_id_dict[ancestor]) # col number (ancestor)
+                if include_duplicates or layer == max_layer-2:  # if duplicates are allowed or the next layer is the final layer, create an edge
+                    vals.append(1)
+                else:  # otherwise observe the ancestor of the ancestor - if this matches the current code, do not create an edge. Otherwise create an edge.
+                    double_ancestor = translation_dict[ancestor]["parents"][layer+1]  
+                    duplicate_ancestor = double_ancestor == code
+                    vals.append(not(duplicate_ancestor)*1)
 
-        matrix = csr_matrix((vals, (rows, cols)), shape=((len(rows)), (len(set(cols))))) # set up the sparse matrix
+        matrix = csr_matrix((vals, (rows, cols)), shape=((len(code_ids)), (len(set(cols))))) # set up the sparse matrix
         
         matrices.append(matrix) # append the matrix for this layer
         layer_id_dicts.append(layer_id_dict) # append the id dictionary for this layer
+
     return matrices, layer_id_dicts 
 
     
