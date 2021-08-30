@@ -222,13 +222,13 @@ def report_micro_bin(pred, gold):
     gold_bin = (gold>0)*1
     return report_micro(pred_bin, gold_bin)
 
-def report_bin(pred, gold):
+def report_bin(pred, gold, code_id_dict):
     """
     Creates a per-class dataframe report on binarised inputs.
     """
     pred_bin = (pred>0)*1
     gold_bin = (gold>0)*1
-    return report(pred_bin, gold_bin)
+    return report(pred_bin, gold_bin, code_id_dict)
 
 def hierarchical_evaluation(logits_binary, evalY_np_array, vocabulary_word2index_label,translation_dict,max_layer=3,verbo=False):
     '''A summary function for final reporting
