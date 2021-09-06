@@ -231,8 +231,9 @@ def report_bin(pred, gold, code_id_dict):
     return report(pred_bin, gold_bin, code_id_dict)
 
 def hierarchical_evaluation(logits_binary, evalY_np_array, vocabulary_word2index_label,translation_dict,max_layer=3,verbo=False):
-    '''A summary function for final reporting
-    Return 4 variables: micro prec,rec,f1 for overall he, and then the list of results per layer, from layer 1 (leaf node only) up to layer 4 (so there are 4 sets of results, each set has 3 metrics, i.e. micro prec,rec,f1). (he: hierarchical evaluation)
+    '''
+    A summary function for final reporting.
+    Return 4 variables: micro prec,rec,f1 for overall he, and then the list of results per layer, from layer 1 (leaf node only) up to layer 4 (so there are 4 sets of results, each set has 3 metrics, i.e. micro prec,rec,f1). (he: hierarchical evaluation).
     '''
     matrices, layer_id_dicts  = (combined_matrix_setup(vocabulary_word2index_label, translation_dict, max_layer = max_layer))
     if verbo:
