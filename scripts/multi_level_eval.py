@@ -230,19 +230,31 @@ def report_bin(pred, gold, code_id_dict):
     gold_bin = (gold>0)*1
     return report(pred_bin, gold_bin, code_id_dict)
 
-def hierarchical_evaluation(logits_binary, evalY_np_array, vocabulary_word2index_label,translation_dict,max_layer=3,verbo=False):
-    '''A summary function for final reporting
-    Return 4 variables: micro prec,rec,f1 for overall he, and then the list of results per layer, from layer 1 (leaf node only) up to layer 4 (so there are 4 sets of results, each set has 3 metrics, i.e. micro prec,rec,f1). (he: hierarchical evaluation)
+def hierarchical_evaluation(pred, gold, code_ids,translation_dict,max_onto_layers=3,verbo=False):
     '''
-    matrices, layer_id_dicts  = (combined_matrix_setup(vocabulary_word2index_label, translation_dict, max_layer = max_layer))
+    A summary function for final reporting.
+    Inputs:
+        pred                2d np.array prediction matrix
+        gold                2d np.array matrix of gold standard labels
+        code_ids            dictionary mapping codes to their ID in the prediction/gold vectors
+        translation_dict    dictionary mapping codes to their ID in the prediction/gold vectors
+        max_onto_layers           an integer describing the maximum layer (from the bottom up) within the ontology to be evaluated on
+        verbo               whether to verbolise the translation matrices
+    Return 4 variables: 
+        micro prec for the overall hierarchical evaluation,
+        rec for the overall hierarchical evaluation,
+        f1 for the overall hierarchical evaluation, 
+        the list of results per layer, from layer 1 (leaf node only) up to layer 4 (so there are 4 sets of results, each set has 3 metrics, i.e. micro prec,rec,f1).
+    '''
+    matrices, layer_id_dicts  = (combined_matrix_setup(code_ids, translation_dict, max_layer = max_onto_layers))
     if verbo:
         print("========TRANSLATION MATRICES========")            
-        for layer_ind in range(max_layer+1):
+        for layer_ind in range(max_onto_layers+1):
             print("Layer %s labels:" % (str(layer_ind+1)))
             print(matrices[layer_ind].shape, matrices[layer_ind].toarray(), layer_id_dicts[layer_ind])
             print("====================================")
     
-    combined_preds, combined_golds = hierarchical_eval_setup(logits_binary, evalY_np_array, matrices, max_onto_layers = max_layer)
+    combined_preds, combined_golds = hierarchical_eval_setup(pred, gold, matrices, max_onto_layers = max_onto_layers)
     print('hiearchical evaluation - micro-level results')
     print('overall hierarchical evaluation results:')
     he_micro_dict = report_micro(combined_preds, combined_golds)
@@ -251,17 +263,17 @@ def hierarchical_evaluation(logits_binary, evalY_np_array, vocabulary_word2index
     #he_macro_prec,he_macro_rec,he_macro_f1 = he_macro_dict['Precision'],he_macro_dict['Recall'],he_macro_dict['F1']
     print(he_micro_dict)
     #print(he_macro_dict)
-    print('set-based:')
+    print('overall set-based results:')
     he_micro_set_based_dict = report_micro_bin(combined_preds, combined_golds)
     print(he_micro_set_based_dict)
     
     list_results_by_layer = []
     #get results and loop over parent levels
-    for layer_ind in range(max_layer+1):
+    for layer_ind in range(max_onto_layers+1):
         child_to_parent_matrix = matrices[layer_ind].toarray()
         
-        parent_pred_matrix = logits_binary.dot(child_to_parent_matrix)
-        parent_gold_matrix = evalY_np_array.dot(child_to_parent_matrix)
+        parent_pred_matrix = pred.dot(child_to_parent_matrix)
+        parent_gold_matrix = gold.dot(child_to_parent_matrix)
         print('result at layer %s' % str(layer_ind + 1))
         he_micro_dict = report_micro(parent_pred_matrix, parent_gold_matrix)
         #he_macro_dict = report_macro(parent_pred_matrix, parent_gold_matrix)
