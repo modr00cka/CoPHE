@@ -1,6 +1,6 @@
 # CoPHE
 
-Count-preserving hierarchical evaluatino and set-based hierarchical evaluation methods for hierarchical label spaces.
+Count-preserving hierarchical evaluation and set-based hierarchical evaluation methods for hierarchical label spaces.
 Currently implemented only for the label space of the ICD-9 ontology of diseases and procedures.
 
 ## Requirements
@@ -15,10 +15,10 @@ Currently implemented only for the label space of the ICD-9 ontology of diseases
 ### evaluation_setup.py
 This script cotains methods for setting up the evaluation.
 
-``setup_matrices_by_layer`` produces transition matrices between the original prediction and each layer, along with the resulting ancestor code IDs within the vectors created throug multiplication by transition matrices.
+``setup_matrices_by_layer.py`` produces transition matrices between the original prediction and each layer, along with the resulting ancestor code IDs within the vectors created through multiplication by transition matrices.
 
 
-``hierarchical_eval_setup`` concatenates the predictions and gold standard across layers respectively. This results in overall predictions (with ancestors) and overall gold standard (with ancestors). These can then be evaluated with methods from ``multi_level_eval.py``
+``hierarchical_eval_setup.py`` concatenates the predictions and gold standard across layers respectively. This results in overall predictions (with ancestors) and overall gold standard (with ancestors). These can then be evaluated with methods from ``multi_level_eval.py``
 
 ### mutli_level_eval.py 
 This script includes the evaluation measures - either overall, or per class; binary and non-binary. It also includes reporting functions for precision, recall, and F1. The ``report`` method produces these for each class and presents them as a dataframe.
