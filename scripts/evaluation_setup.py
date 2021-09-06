@@ -56,7 +56,7 @@ def setup_matrices_by_layer(code_ids, translation_dict, max_layer = 1, include_d
     return matrices, layer_id_dicts 
 
     
-def low_level_diagonal(code_ids, translation_dict):
+def low_level_filter(code_ids, translation_dict):
     """
     Creates the matrix to keep only the lowest-level leaf codes
     """
@@ -80,7 +80,7 @@ def low_level_diagonal(code_ids, translation_dict):
     return matrix, layer_id_dict
     
 def combined_matrix_setup(code_ids, translation_dict, max_layer = 1, include_duplicates = False):
-    low_level_matrix, low_level_id_dict = low_level_diagonal(code_ids, translation_dict)
+    low_level_matrix, low_level_id_dict = low_level_filter(code_ids, translation_dict)
     matrices, level_id_dicts = setup_matrices_by_layer(code_ids, translation_dict, max_layer, include_duplicates)
     return [low_level_matrix]+matrices, [low_level_id_dict]+level_id_dicts
                 
