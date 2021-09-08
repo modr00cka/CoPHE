@@ -1,9 +1,4 @@
-# icd9_hierachical_eval
-
-## Requirements
-
-``numpy``
-``scipy.sparse.csr_matrix``
+# ICD-9 Hierarchical Evaluation
 
 ## Motivation
 Evaluation in Large-Scale Multi-Label Classification, such as ICD-9 coding in MIMIC-III, is treated in prior art as exact-match evaluation. As these tasks are weakly labelled, we are comparing document-level predictions with document-level gold standard labels. For each document a prediction binary vector is compared to a gold-standard binary vector. The label space consists of leaf nodes within the ICD-9 tree, treating both the prediction and the gold standard as flat. 
@@ -77,17 +72,3 @@ ICD-9 leaves appear at different depths. This means that a parent of one leaf co
 ![6](Images/combined_representations.png)
 <center>Figure 5: Ancestor-relation based representation, versus layer-based representation. Ancestor-relation based representaion of the hierarchy (black edges represent a parent relation, yellow edges represents a parent of a parent relation). The red and blue lines divide up the hierarchy based on layers (depth)</center>
 
-## Scripts
-
-### evaluation_setup.py
-This script cotains methods for setting up the evaluation.
-
-``setup_matrices_by_layer`` produces transition matrices between the original prediction and each layer, along with the resulting ancestor code IDs within the vectors created throug multiplication by transition matrices.
-
-
-``hierarchical_eval_setup`` concatenates the predictions and gold standard across layers respectively. This results in overall predictions (with ancestors) and overall gold standard (with ancestors). These can then be evaluated with methods from ``multi_level_eval.py``
-
-### mutli_level_eval.py 
-This script includes the evaluation measures - either overall, or per class; binary and non-binary. It also includes reporting functions for precision, recall, and F1. The ``report`` method produces these for each class and presents them as a dataframe.
-
-The intended use is to create individual reports for each of the layers for in-depth analysis, and to run an overall micro-average report on the concatenated matrices received from ``hierarchical_eval_setup`` from ``evaluation_setup.py``
