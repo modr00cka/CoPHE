@@ -27,5 +27,5 @@ The intended use is to create individual reports for each of the layers for in-d
 
 ## Theoretical background
 
-For a theoretical background behind this implementation, please refer to [link_to_publication].
+For a theoretical background behind this implementation, please refer to the [CoPHE paper](https://arxiv.org/abs/2109.04853).
 An informal summary can be found in ``Summary.md``.
