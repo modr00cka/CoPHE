@@ -85,6 +85,6 @@ def full_setup(in_json_path, out_csv_path):
     describe_graph(translated_graph).to_csv(out_csv_path, index=False)
 
 if __name__ == "__main__":
-    json_path = ""
-    out_path = ""
+    json_path = r"../EUROVOC/eurovoc_en.json"
+    out_path = r"../EUROVOC/eurovoc_en.csv"
     full_setup(json_path, out_path)
