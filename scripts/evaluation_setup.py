@@ -9,6 +9,14 @@ def load_translation_dict_from_icd9(fn_icd9_graph_json='../ICD9/icd9_graph_desc.
     with open(fn_icd9_graph_json,encoding='utf-8') as json_file:    
         translation_dict_icd9 = json.load(json_file)
     return translation_dict_icd9
+    
+def load_translation_dict_from_icd10(fn_icd10_graph_json='../ICD10/icd10_graph_desc.json'):
+    """
+    Load the icd10 graph translation dictionary
+    """
+    with open(fn_icd10_graph_json,encoding='utf-8') as json_file:    
+        translation_dict_icd10 = json.load(json_file)
+    return translation_dict_icd10
 
 def setup_matrices_by_layer(code_ids, translation_dict, max_layer = 1, include_duplicates = False):
     """
@@ -44,6 +52,7 @@ def setup_matrices_by_layer(code_ids, translation_dict, max_layer = 1, include_d
                 if include_duplicates or layer == max_layer-2:  # if duplicates are allowed or the next layer is the final layer, create an edge
                     vals.append(1)
                 else:  # otherwise observe the ancestor of the ancestor - if this matches the current code, do not create an edge. Otherwise create an edge.
+                    assert ancestor in translation_dict, f'Ancestor {ancestor} of code {code} not found.'
                     double_ancestor = translation_dict[ancestor]["parents"][layer+1]  
                     duplicate_ancestor = double_ancestor == code
                     vals.append(not(duplicate_ancestor)*1)
@@ -184,7 +193,7 @@ if __name__ == "__main__":
     print("The ICD9 graph example")
     #load json to get the  translation_dict from icd-9
     fn_icd9_graph_json = r'..\ICD9\icd9_graph_desc.json'
-    translation_dict_icd9 = load_translation_dict_from_icd9(fn_icd9_graph_json)
+    translation_dict_icd9 = load_translation_dict_from_icd9("/disk/scratch/s1206296/PhD/PhD/code/repos/CoPHE-Master/ICD9/icd9_graph_desc.json")
     
     print("There are %d entries in translation_dict_icd9." % len(translation_dict_icd9))
     
@@ -196,3 +205,24 @@ if __name__ == "__main__":
     print("====================================")
     print("Leaves to 2")
     print(matrices[1].toarray(), layer_id_dicts[1])
+    
+    
+    #another example: about ICD9 graph
+    print("The ICD10 graph example")
+    #load json to get the  translation_dict from icd-9
+    fn_icd10_graph_json = r'..\ICD10\icd10_graph_desc.json'
+    translation_dict_icd10 = load_translation_dict_from_icd10("/disk/scratch/s1206296/PhD/PhD/code/repos/CoPHE-Master/ICD10/icd10_graph_desc.json")
+    
+    print("There are %d entries in translation_dict_icd10." % len(translation_dict_icd10))
+    print(translation_dict_icd9['401.9'])
+    print(translation_dict_icd10['Q55.63'])
+    code_ids = dict(zip(["S52.044Q", "T49.8X5A", "S52.044P"], range(3)))
+    matrices, layer_id_dicts  = (setup_matrices_by_layer(code_ids, translation_dict_icd10, max_layer = 2))
+    print("========TRANSLATION MATRICES========")
+    print("Leaves to 1")
+    print(matrices[0].toarray(), layer_id_dicts[0])
+    print("====================================")
+    print("Leaves to 2")
+    print(matrices[1].toarray(), layer_id_dicts[1])
+    
+    

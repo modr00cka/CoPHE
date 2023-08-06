@@ -5,7 +5,7 @@ import numpy as np
 
 import logging
 
-from evaluation_setup import hierarchical_eval_setup, combined_matrix_setup
+from .evaluation_setup import hierarchical_eval_setup, combined_matrix_setup
 
 def tp_matrix_mul(pred, gold, axes):
     """
