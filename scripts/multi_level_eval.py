@@ -304,8 +304,12 @@ def hierarchical_evaluation(
     for layer_ind in range(max_onto_layers + 1):
         child_to_parent_matrix = matrices[layer_ind].toarray()
 
-        parent_pred_matrix = pred.dot(child_to_parent_matrix)
-        parent_gold_matrix = gold.dot(child_to_parent_matrix)
+        pred_sparse = csr_matrix(pred)
+        gold_sparse = csr_matrix(gold)
+        child_to_parent_matrix_sparse = csr_matrix(child_to_parent_matrix)
+
+        parent_pred_matrix = pred_sparse.dot(child_to_parent_matrix_sparse).toarray()
+        parent_gold_matrix = gold_sparse.dot(child_to_parent_matrix_sparse).toarray()
         logging.info("result at layer %s" % str(layer_ind + 1))
         he_micro_dict = report_micro(parent_pred_matrix, parent_gold_matrix)
         # he_macro_dict = report_macro(parent_pred_matrix, parent_gold_matrix)
