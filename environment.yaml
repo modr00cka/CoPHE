@@ -1,0 +1,10 @@
+name: cophe
+channels:
+  - defaults
+  - conda-forge
+  - pyg
+dependencies:
+  - python=3.10
+  - pandas
+  - numpy
+  - scipy

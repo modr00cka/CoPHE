@@ -9,6 +9,13 @@ Currently implemented only for the label space of the ICD-9 ontology of diseases
 ``pandas``
 ``scipy.sparse.csr_matrix``
 
+The following command will install the necessary dependencies using Conda package manager:
+```bash
+conda env create -f environment.yaml
+conda activate cophe
+```
+
+You can also choose not to use this virtual environment should you have the required packages installed.
 
 ## Scripts
 
