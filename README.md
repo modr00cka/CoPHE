@@ -28,11 +28,9 @@ The intended use is to create individual reports for each of the layers for in-d
 All scripts are accompanied with test cases to help understand the logic better.
 These test cases can be executed by running said scripts:
 ```bash
-python evaluation_setup.py
-
+python -m scripts.evaluation_setup
 # or
-
-python multi_level_eval.py
+python -m scripts.multi_level_eval
 ```
 
 ## Theoretical background
