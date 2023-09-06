@@ -247,10 +247,8 @@ if __name__ == "__main__":
     # another example: about ICD9 graph
     logging.info("The ICD9 graph example")
     # load json to get the  translation_dict from icd-9
-    fn_icd9_graph_json = r"..\ICD9\icd9_graph_desc.json"
-    translation_dict_icd9 = load_translation_dict_from_icd9(
-        "/disk/scratch/s1206296/PhD/PhD/code/repos/CoPHE-Master/ICD9/icd9_graph_desc.json"
-    )
+    fn_icd9_graph_json = "ICD9/icd9_graph_desc.json"
+    translation_dict_icd9 = load_translation_dict_from_icd9(fn_icd9_graph_json)
 
     logging.info(
         "There are %d entries in translation_dict_icd9." % len(translation_dict_icd9)
@@ -270,10 +268,8 @@ if __name__ == "__main__":
     # another example: about ICD9 graph
     logging.info("The ICD10 graph example")
     # load json to get the  translation_dict from icd-9
-    fn_icd10_graph_json = r"..\ICD10\icd10_graph_desc.json"
-    translation_dict_icd10 = load_translation_dict_from_icd10(
-        "/disk/scratch/s1206296/PhD/PhD/code/repos/CoPHE-Master/ICD10/icd10_graph_desc.json"
-    )
+    fn_icd10_graph_json = "ICD10/icd10_graph_desc.json"
+    translation_dict_icd10 = load_translation_dict_from_icd10(fn_icd10_graph_json)
 
     logging.info(
         "There are %d entries in translation_dict_icd10." % len(translation_dict_icd10)
